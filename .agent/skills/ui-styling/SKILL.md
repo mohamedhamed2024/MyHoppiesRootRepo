@@ -1,157 +1,88 @@
 ---
 name: ui-styling
-description: UI and styling conventions for the Ontellus ChartSwap Next.js frontend (`ontellus.chartswap/`). Use this skill when creating or modifying UI components, Tailwind styles, global SCSS overrides, tokens (colors/z-index/spacing), responsive layout, and third-party UI wrappers (react-select, react-datepicker, rc-tooltip, react-toastify). Make sure to use this skill whenever the user mentions UI components, styling, Tailwind CSS, SCSS, design tokens, responsive design, or any third-party UI library integration in the ChartSwap project.
+description: UI and styling conventions for the Ontellus ChartSwap Next.js frontend (`ontellus.chartswap/`). Use when creating or modifying UI components, Tailwind styles, global SCSS overrides, tokens (colors/z-index/spacing), responsive layout, and third-party UI wrappers (react-select, react-datepicker, rc-tooltip, react-toastify).
 ---
 
-# UI Styling
+# ChartSwap UI & Styling (New Portal)
 
-UI and styling conventions for the Ontellus ChartSwap Next.js frontend. This skill provides guidance on creating consistent, maintainable UI components and styles following project standards.
+Apply this skill to **UI/styling work** in the Next.js app under `ontellus.chartswap/` (Pages Router).
 
-## Overview
+Keep changes consistent with the repo’s existing patterns:
 
-This skill covers styling patterns, conventions, and best practices for the ChartSwap frontend. It includes Tailwind CSS usage, SCSS overrides, design tokens, responsive layouts, and integration with third-party UI libraries.
+- Prefer existing reusable UI primitives in `src/components/UI/` over one-off markup.
+- Prefer Tailwind utilities and existing Tailwind tokens (colors, z-index).
+- Put cross-cutting overrides and vendor component tweaks in `src/styles/globals.scss`.
 
-## Prerequisites
+## Repo reality (styling stack and wiring)
 
-- Next.js project structure
-- Tailwind CSS configured
-- SCSS support enabled
-- Understanding of React component patterns
-- Access to design tokens and style guide
+- **Tailwind is loaded via SCSS**: `ontellus.chartswap/src/styles/globals.scss` contains `@tailwind base/components/utilities`.
+- **Global styles are imported once** in `ontellus.chartswap/src/pages/_app.tsx` (`import "@/styles/globals.scss";`).
+- **Sass is used for one global stylesheet** (`globals.scss`); there are **no CSS modules** (`*.module.css` / `*.module.scss`) in the app during the audit.
+- **Vendor CSS imports exist** (don’t “purify” them away):
+  - `react-toastify/dist/ReactToastify.css` is imported in `src/components/Layout/Layout.tsx`
+  - `react-datepicker/dist/react-datepicker.css` is imported in `src/components/UI/Datepicker/Datepicker.tsx`
+  - `rc-tooltip/assets/bootstrap_white.css` is imported in a feature area where needed
+- **Font**: Roboto is loaded in `src/pages/_document.tsx` (Google Fonts link). Don’t introduce new font-loading approaches unless required.
 
-## Instructions
+## Workflow (use this order)
 
-### Tailwind Styles
+1. **Find the closest existing UI primitive**
+   - Search under `ontellus.chartswap/src/components/UI/` first (button, input, dropdown, modal, table, etc.).
+   - If a primitive exists, extend it or reuse it rather than adding duplicate UI behavior elsewhere.
 
-Use Tailwind utility classes for component styling. Follow these patterns:
+2. **Use project tokens instead of inventing new ones**
+   - **Tailwind tokens**: use keys like `primary/300`, `grey/200`, `z-navbar`, etc. (see `tailwind.config.js`).
+   - **TypeScript tokens**: when you need inline styles (e.g., `react-select` style objects), use `src/constants/UI/ColorEnum.ts`.
 
-1. **Component Structure**: Apply Tailwind classes directly in JSX
-2. **Responsive Design**: Use Tailwind breakpoint prefixes (`sm:`, `md:`, `lg:`, `xl:`)
-3. **State Variants**: Use conditional classes for hover, focus, active states
-4. **Custom Utilities**: Extend Tailwind config for project-specific utilities
+3. **Choose the right styling mechanism**
+   - **Tailwind `className`**: default for components.
+   - **`tailwind-merge`**: use when combining conditional class strings that might conflict.
+   - **Inline style objects**: acceptable for libraries that require them (notably `react-select`).
+   - **Global overrides**: use `src/styles/globals.scss` for:
+     - vendor component overrides (datepicker, tooltip, scrollbar)
+     - shared utility classes used across the app
 
-**Example:**
-```tsx
-<button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
-  Click me
-</button>
-```
+4. **Use the repo wrappers for third-party UI**
+   - Dropdown/Select: `src/components/UI/Dropdown/*` (wraps `react-select`)
+   - Date picker: `src/components/UI/Datepicker/*` (wraps `react-datepicker`)
+   - Tooltip: `src/components/UI/CSTooltip/CSTooltip.tsx` (wraps `rc-tooltip`)
+   - Toasts: call `toast(...)`; container is already mounted in `src/components/Layout/Layout.tsx`
 
-### Global SCSS Overrides
+5. **Be careful with global button reset**
+   - `src/styles/globals.scss` resets `button { all: unset; ... }`
+   - Any new `<button>` must explicitly set:
+     - layout (flex/grid), padding, border, background
+     - focus/hover/active states
+     - disabled states
 
-Use SCSS files for global styles and overrides:
+## Do / Don’t (to stay consistent with this repo)
 
-1. **Global Styles**: Place in `styles/globals.scss`
-2. **Component Styles**: Use CSS modules when needed
-3. **Overrides**: Target third-party component styles via SCSS
-4. **Variables**: Use SCSS variables for dynamic values
+- **Do** reuse existing Tailwind palette keys like `primary/300`, `grey/200`, `danger/300`, and z-index keys like `z-navbar`, `z-tooltip`.
+- **Do** use `ColorEnum` when a library forces inline styles (e.g., `react-select` style objects).
+- **Do** put third-party component overrides in `globals.scss` when they’re global concerns (e.g., datepicker z-index issues).
+- **Don’t** add a second source of truth for colors (avoid inventing new hex constants outside Tailwind/`ColorEnum`/global SCSS variables).
+- **Don’t** introduce CSS modules “just because”; the app is currently structured around Tailwind + one global SCSS layer.
 
-**Example:**
-```scss
-// Override third-party component
-.react-select-container {
-  .react-select__control {
-    border-color: $primary-color;
-  }
-}
-```
+## Common edits (where to change things)
 
-### Design Tokens
+- **Theme tokens**
+  - Tailwind: `ontellus.chartswap/tailwind.config.js`
+  - TS color enum: `ontellus.chartswap/src/constants/UI/ColorEnum.ts`
 
-Use design tokens for consistent spacing, colors, and z-index:
+- **Global overrides / utilities / typography**
+  - `ontellus.chartswap/src/styles/globals.scss`
+  - Useful for global typography helpers (`.label-medium`, etc.), scrollbar styles, and vendor overrides (datepicker/tooltip).
 
-1. **Colors**: Reference token variables, not hardcoded values
-2. **Spacing**: Use spacing scale tokens
-3. **Z-Index**: Follow z-index layering system
-4. **Typography**: Use typography scale tokens
+- **Buttons**
+  - Component: `ontellus.chartswap/src/components/UI/CSButton/CSButton.tsx`
+  - Variant/size classes: `ontellus.chartswap/src/lib/server/services/Client/CSButton/CSButtonHelper.ts`
 
-**Example:**
-```tsx
-<div style={{ 
-  color: 'var(--color-primary)',
-  padding: 'var(--spacing-md)',
-  zIndex: 'var(--z-index-dropdown)'
-}}>
-```
+- **react-select styling**
+  - Default styles: `ontellus.chartswap/src/components/UI/Dropdown/DropdownDefaultStyle.ts`
+  - Component: `ontellus.chartswap/src/components/UI/Dropdown/Dropdown.tsx`
 
-### Responsive Layout
+## Reference
 
-Implement responsive layouts using Tailwind breakpoints:
+For the full repo audit (packages used, tokens, file map, and observed conventions), read:
 
-1. **Mobile First**: Start with mobile styles, add breakpoints upward
-2. **Breakpoints**: Use `sm:`, `md:`, `lg:`, `xl:` consistently
-3. **Grid Systems**: Use Tailwind grid utilities
-4. **Flexbox**: Prefer flex utilities for component layouts
-
-**Example:**
-```tsx
-<div className="flex flex-col md:flex-row gap-4">
-  <div className="w-full md:w-1/2">Content</div>
-</div>
-```
-
-### Third-Party UI Wrappers
-
-Integrate third-party components following project patterns:
-
-1. **react-select**: Use wrapper component with consistent styling
-2. **react-datepicker**: Apply theme classes
-3. **rc-tooltip**: Configure positioning and styling
-4. **react-toastify**: Use project toast configuration
-
-**Example:**
-```tsx
-import Select from '@/components/ui/Select';
-
-<Select
-  options={options}
-  value={selected}
-  onChange={handleChange}
-  className="custom-select"
-/>
-```
-
-## Output
-
-- Styled UI components following project conventions
-- Consistent use of design tokens
-- Responsive layouts that work across breakpoints
-- Properly integrated third-party components
-- Maintainable SCSS structure
-
-## Error Handling
-
-- **Missing Tokens**: Check token definitions in design system
-- **Style Conflicts**: Use CSS specificity or CSS modules to resolve
-- **Responsive Issues**: Verify breakpoint usage and test on devices
-- **Third-Party Conflicts**: Use SCSS overrides or wrapper components
-
-## Examples
-
-**Example Prompts:**
-- "Style this button component using Tailwind"
-- "Make this layout responsive for mobile and desktop"
-- "Integrate react-select with our design tokens"
-- "Create a card component following our styling conventions"
-
-**Example Component:**
-```tsx
-import { Button } from '@/components/ui/Button';
-
-export function Card({ title, children }) {
-  return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
-      <div className="space-y-4">{children}</div>
-      <Button className="mt-4">Action</Button>
-    </div>
-  );
-}
-```
-
-## Resources
-
-- Tailwind CSS Documentation
-- Project Design System
-- Component Library Documentation
-- SCSS Style Guide
+- `references/repo-ui-styling.md`

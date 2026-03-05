@@ -1,243 +1,707 @@
 ---
 name: pr-review
-description: Reviews code and pull requests for correctness, code quality, security, performance, and adherence to Chartswap standards. Use this skill when reviewing pull requests, examining code changes, reviewing individual files, or when the user asks for a code review or PR review. Make sure to use this skill whenever the user mentions code review, pull request review, code quality, security review, performance review, or code standards compliance.
+description: Reviews code and pull requests for correctness, code quality, security, performance, and adherence to Chartswap standards. Use when reviewing pull requests, examining code changes, reviewing individual files, or when the user asks for a code review or PR review.
 ---
 
-# PR Review
-
-Review code and pull requests for correctness, code quality, security, performance, and adherence to ChartSwap standards.
+# Code & PR Review
 
 ## Overview
 
-This skill enables comprehensive code and pull request reviews. It covers code correctness, quality standards, security vulnerabilities, performance issues, and compliance with project conventions.
+Review code and pull requests systematically by analyzing correctness, code quality, security best practices, performance considerations, and Chartswap-specific patterns. Provide structured feedback with clear severity levels and actionable recommendations.
 
-## Prerequisites
+Works for both:
+- **Pull Request reviews** - Full PR analysis with context
+- **Code reviews** - Individual file or snippet reviews
+- **Implementation feedback** - Reviewing code before or after implementation
 
-- Understanding of code review best practices
-- Knowledge of ChartSwap code standards
-- Familiarity with codebase architecture
-- Security awareness
-- Performance optimization knowledge
+**IMPORTANT**: This is the PRIMARY skill for code and PR reviews. Use this skill for all review-related tasks.
 
-## Instructions
+## When this skill should activate (intent triggers)
 
-### Code Correctness
+**ALWAYS use this skill when:**
+- User asks to "review code" or "review this code"
+- User asks to "review PR" or "review pull request"
+- User asks to "check this code" or "check my code"
+- User asks for "code review" or "PR review"
+- User asks for "feedback on implementation"
+- User asks to "review changes" or "review my changes"
+- User mentions a PR number (e.g., "review PR #123")
+- User asks to "analyze code" or "analyze this PR"
+- User asks for "code quality check" or "security review"
 
-Review code for correctness:
+**Use this skill automatically when the user asks to:**
+- review a PR / pull request
+- review code / code changes
+- check code quality
+- review implementation
+- provide code feedback
+- analyze code changes
+- check for bugs or issues
+- verify code standards
+- review security
+- check performance
 
-1. **Logic**: Verify logic is correct and handles edge cases
-2. **Error Handling**: Check proper error handling and edge cases
-3. **Boundary Conditions**: Verify handling of limits and boundaries
-4. **Data Validation**: Ensure input validation and sanitization
-5. **Business Rules**: Confirm implementation matches requirements
+Typical user phrases:
+- "review this code"
+- "review PR #123"
+- "check my code"
+- "code review please"
+- "review my changes"
+- "can you review this?"
+- "check for bugs"
+- "review for security issues"
+- "analyze this PR"
+- "feedback on my implementation"
+- "does this code look good?"
+- "review for best practices"
 
-**Example Review:**
-```
-Issue: Missing null check
-Location: UserProfile.tsx:45
-Code: const userName = user.name.toUpperCase();
+## Scope rules (critical)
 
-Problem: user.name could be null/undefined
-Fix: const userName = user?.name?.toUpperCase() || 'Unknown';
-```
+This skill MUST:
+1) Only analyze and review code - never modify it
+2) Provide constructive feedback with actionable suggestions
+3) Reference Chartswap standards and best practices
+4) Consider context (PR vs individual code review)
+5) Provide severity levels for all findings
 
-### Code Quality
+This skill MUST NOT:
+- Make code changes or modifications
+- Create commits or modify git history
+- Delete or rename files
+- Push changes to repositories
+- Approve or reject PRs automatically
+- Skip review areas without justification
 
-Assess code quality:
+## Non-goals
 
-1. **Readability**: Code is clear and easy to understand
-2. **Maintainability**: Code is maintainable and well-structured
-3. **DRY Principle**: No unnecessary duplication
-4. **Naming**: Variables and functions have clear names
-5. **Comments**: Comments explain why, not what
+- Code implementation or fixes
+- Creating new features
+- Running tests or builds
+- Deploying code
+- Creating PRs
+- Merging PRs
 
-**Example Review:**
-```
-Issue: Magic numbers
-Location: PaymentProcessor.ts:120
-Code: if (amount > 1000) { ... }
+## Explicit exclusions (do NOT trigger this skill for)
 
-Problem: Unclear what 1000 represents
-Fix: const MAX_SINGLE_PAYMENT = 1000;
-     if (amount > MAX_SINGLE_PAYMENT) { ... }
-```
+Do NOT use this skill when the user asks to:
+- create a PR
+- implement new features
+- fix code issues (provide review feedback instead)
+- run tests
+- deploy code
+- merge a PR
+- approve a PR automatically
 
-### Security Review
+---
 
-Check for security vulnerabilities:
+## Input parameters (from user prompt)
 
-1. **Input Validation**: All inputs are validated and sanitized
-2. **Authentication**: Proper authentication checks
-3. **Authorization**: Correct permission checks
-4. **Sensitive Data**: No hardcoded secrets or sensitive data
-5. **SQL Injection**: Parameterized queries, no string concatenation
-6. **XSS**: Output is properly escaped
-7. **CSRF**: CSRF protection in place
+- **PR Number/URL**: If user specifies a PR (e.g., "review PR #123", "review https://dev.azure.com/..."), fetch and review that specific PR
+- **Review scope**: If user specifies focus areas (e.g., "review for security", "check performance", "review correctness"), prioritize those areas
+- **Target branch**: If reviewing a PR, the target branch context (default: develop)
+- **File/Path filter**: If user specifies files or paths (e.g., "review src/auth/"), focus on those areas
+- **Review depth**: 
+  - "Quick review" or "surface review" → Focus on critical issues only
+  - "Thorough review" or "deep review" → Comprehensive analysis (default)
+- **Output format**: If user requests specific format (e.g., "as comments", "as markdown", "summary only"), adapt output accordingly
 
-**Example Review:**
-```
-Security Issue: Hardcoded API key
-Location: config.ts:15
-Code: const API_KEY = 'sk_live_1234567890';
+## Hard rules
 
-Problem: Secret exposed in code
-Fix: Move to environment variable
-     const API_KEY = process.env.API_KEY;
-```
+1) **No code modifications**
+   - This skill only reviews and provides feedback
+   - Never modify source code files
+   - Never create commits or change files
+   - Suggestions should be clear but not implemented
 
-### Performance Review
+2) **Accurate and fair reviews**
+   - Review findings must accurately reflect actual code issues
+   - Do not exaggerate or minimize problems
+   - Provide balanced feedback (both issues and positives)
+   - Base findings on evidence from the code
 
-Identify performance issues:
+3) **Comprehensive coverage**
+   - Review all relevant focus areas (correctness, quality, security, performance, standards)
+   - Don't skip areas without justification
+   - Consider Chartswap-specific patterns and standards
+   - Reference project standards when applicable
 
-1. **N+1 Queries**: Check for inefficient database queries
-2. **Unnecessary Renders**: React components re-rendering unnecessarily
-3. **Large Bundles**: Check bundle size impact
-4. **Memory Leaks**: Identify potential memory leaks
-5. **Async Operations**: Proper handling of async/await
-6. **Lazy Loading**: Use lazy loading where appropriate
+4) **Actionable feedback**
+   - All findings must include actionable suggestions
+   - Provide code examples when helpful
+   - Explain why issues matter (context)
+   - Prioritize by severity
 
-**Example Review:**
-```
-Performance Issue: Unnecessary re-renders
-Location: ProductList.tsx:30
-Code: const filtered = products.filter(p => p.category === category);
+## Safety & Protection Rules (critical)
 
-Problem: Filter runs on every render
-Fix: Use useMemo to memoize filtered results
-     const filtered = useMemo(() => 
-       products.filter(p => p.category === category), 
-       [products, category]
-     );
-```
+The agent MUST NOT:
+- Execute destructive git commands (reset --hard, clean -fd, branch -D, push --force)
+- Modify or delete any files
+- Push changes to repositories
+- Auto-approve or auto-reject PRs
+- Skip critical security or correctness checks
+- Provide vague or unhelpful feedback
+- Include sensitive information in review comments
 
-### ChartSwap Standards Compliance
+---
 
-Verify adherence to project standards:
+## Review Workflow (must follow in order)
 
-1. **Code Style**: Follows project style guide
-2. **File Structure**: Matches project structure conventions
-3. **Naming Conventions**: Follows project naming patterns
-4. **Testing**: Includes appropriate tests
-5. **Documentation**: Code is documented where needed
-6. **TypeScript**: Proper TypeScript usage
+### Step 0 — Verify prerequisites and gather context
 
-**Example Review:**
-```
-Standards Issue: Missing TypeScript types
-Location: api.ts:10
-Code: function fetchUser(id) { ... }
+Check:
+1) Determine review type (PR review vs code snippet review)
+2) Identify target branch or base for comparison (if PR review)
+3) Gather all relevant code changes and context
+4) Check if PR exists and is accessible (if PR number provided)
 
-Problem: Missing type annotations
-Fix: function fetchUser(id: string): Promise<User> { ... }
-```
+Commands for PR review:
+```bash
+# Get PR details (if PR number provided)
+# For Azure DevOps: az repos pr show --id <PR_ID>
+# For GitHub: gh pr view <PR_NUMBER>
 
-### Review Checklist
+# Get current branch (if reviewing current branch)
+git branch --show-current
 
-Use systematic review checklist:
+# Get base branch (default: develop)
+BASE_BRANCH="${BASE_BRANCH:-develop}"
 
-1. **Functionality**: Does it work as intended?
-2. **Tests**: Are there adequate tests?
-3. **Documentation**: Is code documented?
-4. **Performance**: Any performance concerns?
-5. **Security**: Any security vulnerabilities?
-6. **Standards**: Follows project standards?
-7. **Dependencies**: Are new dependencies justified?
+# Fetch latest from remote
+git fetch origin
 
-**Example Checklist:**
-```
-PR Review Checklist:
-✅ Code works as expected
-✅ Tests added/updated
-✅ No security vulnerabilities
-✅ Follows code style guide
-✅ Performance acceptable
-✅ Documentation updated
-⚠️ Missing error handling in one function
-❌ Needs refactoring for readability
-```
+# List commits in PR/branch
+git log origin/$BASE_BRANCH..HEAD --oneline --no-merges
 
-### Review Comments
-
-Provide constructive feedback:
-
-1. **Be Specific**: Point to exact lines and issues
-2. **Be Constructive**: Suggest improvements, not just problems
-3. **Be Respectful**: Maintain professional tone
-4. **Prioritize**: Mark critical vs. nice-to-have issues
-5. **Explain Why**: Explain reasoning behind suggestions
-
-**Example Review Comment:**
-```
-Good: "Consider extracting this logic into a separate function 
-for better testability. The current implementation mixes data 
-fetching with transformation logic."
-
-Better: "Line 45-60: Consider extracting the data transformation 
-logic into a separate `transformUserData` function. This would:
-1. Improve testability (can test transformation separately)
-2. Follow single responsibility principle
-3. Make the code more reusable
-
-Example:
-function transformUserData(rawData: RawUser): User {
-  // transformation logic
-}"
+# Get file changes
+git diff origin/$BASE_BRANCH..HEAD --name-only
+git diff origin/$BASE_BRANCH..HEAD --stat
 ```
 
-## Output
+Commands for code snippet review:
+- Read provided code files
+- Understand context from file paths and surrounding code
+- Check related files if needed for context
 
-- Comprehensive code review with specific feedback
-- Security vulnerability assessment
-- Performance analysis
-- Standards compliance report
-- Actionable recommendations
-- Approval status (approve/request changes/comment)
+### Step 1 — Analyze code changes
 
-## Error Handling
+Goal: Understand all changes that need to be reviewed.
 
-- **False Positives**: Verify issues before reporting
-- **Missing Context**: Ask for clarification when needed
-- **Conflicting Standards**: Refer to project style guide
-- **Complex Changes**: Break down into smaller reviews
+For PR reviews:
+```bash
+# Get detailed diff
+git diff origin/$BASE_BRANCH..HEAD
+
+# Get commit messages for context
+git log origin/$BASE_BRANCH..HEAD --format="%h %s%n%b" --no-merges
+
+# List all changed files with change type
+git diff origin/$BASE_BRANCH..HEAD --name-status
+```
+
+For code snippet reviews:
+- Analyze the provided code
+- Check imports and dependencies
+- Understand the purpose and context
+
+Output:
+- **Files changed**: List of all files being reviewed
+- **Change type**: feature / bugfix / refactor / chore / docs
+- **Scope**: Size and complexity of changes
+- **Context**: Related files or dependencies
+
+### Step 2 — Review against checklist
+
+Systematically check each area:
+
+1. **Correctness & Logic** - Verify functional correctness
+2. **Code Quality** - Check readability, naming, structure
+3. **Architecture & Design** - Verify design patterns and SOLID principles
+4. **Performance** - Check async/await, concurrency, resource management
+5. **Security** - Verify authentication, authorization, data protection
+6. **Testing** - Check test coverage and quality
+7. **Chartswap Patterns** - Verify framework-specific patterns
+8. **Configuration** - Check environment variables and deployment
+9. **Documentation** - Verify code documentation
+
+### Step 3 — Categorize findings
+
+For each issue found:
+- Assign severity (Critical / High / Medium / Low)
+- Categorize by focus area
+- Note file and line location
+- Prepare suggestion with code example if helpful
+- Add context explaining why it matters
+
+### Step 4 — Generate review feedback
+
+**CRITICAL: The agent MUST ALWAYS analyze the code thoroughly BEFORE providing feedback. Never provide generic or placeholder feedback - always base findings on actual code analysis.**
+
+**Default behavior: Provide comprehensive review**
+
+After completing Steps 0-3, generate structured feedback:
+
+1. **Summary Section** - Overall assessment with verdict
+2. **Detailed Findings** - All issues organized by severity
+3. **Positive Feedback** - Recognition of good practices
+4. **Recommendations** - Actionable next steps
+
+**If user specified "quick review" or "surface review":**
+1. MUST still perform Steps 0-3 (analyze code thoroughly)
+2. Focus output on Critical and High severity issues only
+3. Provide brief summary of other areas checked
+4. Indicate that deeper review may reveal additional findings
+
+**Error handling:**
+- If PR not accessible: provide manual review instructions
+- If code files not found: report error and suggest alternatives
+- If context unclear: ask for clarification or make reasonable assumptions
+
+### Step 5 — Report review results
+
+Output:
+1) **Review Summary** - Verdict and overall assessment
+2) **Findings Count** - Number of issues by severity
+3) **Key Concerns** - Top 3-5 critical issues
+4) **Positive Highlights** - Well-implemented patterns
+5) **Recommendations** - Next steps for addressing issues
+6) **Review Metadata** - Files reviewed, PR number (if applicable), review date
+
+## Review Checklist
+
+Verify these areas systematically:
+
+- [ ] Code is correct and handles edge cases
+- [ ] Code follows project coding standards
+- [ ] No security vulnerabilities introduced
+- [ ] Performance considerations addressed
+- [ ] Error handling is comprehensive
+- [ ] Tests are included and passing
+- [ ] Documentation is updated
+- [ ] No breaking changes (or properly documented)
+- [ ] Configuration changes are backward compatible
+- [ ] Dependencies are up to date
+- [ ] No hardcoded values or secrets
+- [ ] Logging is appropriate
+
+## Review Focus Areas
+
+### 1. Correctness & Logic
+
+**Functional correctness**
+- Does the code work as intended?
+- Logic errors and bugs
+- Edge case handling
+- Off-by-one errors
+- Boundary condition handling
+- Null/undefined checks
+- Type mismatches
+
+**Data flow**
+- Correct data transformations
+- Proper state updates
+- Side effects handled correctly
+- Race conditions avoided
+
+### 2. Code Quality & Best Practices
+
+**Code clarity and readability**
+- Variable and function naming conventions
+- Code organization and structure
+- Comments and documentation quality
+- DRY principle violations
+- Code duplication
+
+**Error handling**
+- Proper exception handling
+- Error messages clarity
+- Graceful degradation
+- Logging and error tracking
+- Error propagation
+
+### 3. Architecture & Design
+
+**Design patterns**
+- Appropriate use of design patterns
+- SOLID principles adherence
+- Separation of concerns
+- Dependency injection usage
+- Single responsibility principle
+
+**Integration patterns**
+- NServiceBus message handling patterns
+- Azure Service Bus integration correctness
+- Salesforce API integration patterns
+- Database access patterns (SQL Server persistence)
+
+### 4. Performance & Scalability
+
+**Async/await correctness**
+- Proper async/await usage
+- Avoid blocking async calls
+- ConfigureAwait usage where appropriate
+- Task vs Thread misuse
+
+**Concurrency**
+- Parallel.For / PLINQ misuse
+- CancellationToken usage
+- Thread safety issues
+- Race conditions
+- Deadlock potential
+
+**Resource management**
+- IDisposable pattern usage
+- Memory leaks potential
+- Connection pooling
+- Efficient database queries
+- N+1 query problems
+
+### 5. Security
+
+**Authentication & Authorization**
+- Proper credential handling
+- Token management
+- Authorization checks
+- Input validation
+
+**Data protection**
+- Sensitive data exposure
+- SQL injection prevention
+- XSS prevention (for frontend)
+- Secure configuration management
+- Injection risks (SQL, command, etc.)
+
+### 6. Testing
+
+**Test coverage**
+- Unit test coverage for new code
+- Integration test considerations
+- Test quality and maintainability
+- Mock usage appropriateness
+- Edge cases tested
+
+### 7. Chartswap-Specific Patterns
+
+For detailed Chartswap-specific review guidelines, see [references/chartswap-standards.md](references/chartswap-standards.md).
+
+**NServiceBus Configuration**
+- Correct transport configuration (Azure Service Bus)
+- Proper persistence setup (SQL Server)
+- Endpoint configuration correctness
+- Message routing and subscription patterns
+- Error handling and recoverability settings
+
+**.NET Backend Services**
+- Proper dependency injection setup
+- Configuration management (appsettings.json)
+- Health check implementations
+- Logging (Serilog) configuration
+- Environment-specific settings
+
+**Next.js Frontend**
+- React hooks usage (useState, useEffect, etc.)
+- Next.js API routes patterns
+- TypeScript type safety
+- Component reusability
+- State management patterns
+- Tailwind CSS usage (no other CSS tools)
+- Cleanup functions in useEffect
+
+**Salesforce Integration**
+- API call patterns
+- Authentication handling
+- Error handling for Salesforce API calls
+- Rate limiting considerations
+- Token refresh logic
+
+### 8. Configuration & Environment
+
+**Environment variables**
+- Proper use of environment variables
+- No hardcoded secrets
+- Configuration validation
+
+**Docker & Deployment**
+- Dockerfile best practices
+- docker-compose configuration
+- Health checks
+- Resource limits
+
+### 9. Documentation
+
+**Code documentation**
+- XML comments for public APIs (.NET)
+- README updates if needed
+- Architecture decision records (if applicable)
+- Inline comments for complex logic
+
+## Review Output Format
+
+### Summary Section
+
+Provide overall assessment:
+- **Verdict**: Approve / Request Changes / Comment
+- **Key concerns**: List top 3-5 critical issues
+- **Highlights**: Positive aspects worth recognizing
+- **Risk assessment**: Overall risk level and concerns
+
+### Detailed Feedback
+
+For each issue found, include:
+
+1. **Severity**: Critical / High / Medium / Low
+2. **Location**: File path and line number(s)
+3. **Issue**: Clear description of the problem
+4. **Suggestion**: Actionable recommendation with code example if helpful
+5. **Context**: Why this matters (optional, for educational value)
+
+### Feedback Examples
+
+**Critical severity:**
+```
+🔴 **Critical**: Security vulnerability - SQL injection risk
+
+**Location**: `services/UserService.cs:45`
+
+**Issue**: Direct string concatenation in SQL query without parameterization
+
+**Suggestion**: Use parameterized queries:
+```csharp
+var query = "SELECT * FROM Users WHERE Id = @userId";
+var parameters = new { userId = id };
+```
+
+**Context**: This exposes the application to SQL injection attacks.
+```
+
+**High severity:**
+```
+🟠 **High**: Correctness issue - off-by-one error
+
+**Location**: `utils/arrayHelper.ts:23`
+
+**Issue**: Loop iterates one element too many, causing index out of bounds
+
+**Suggestion**: Change condition from `i <= array.length` to `i < array.length`
+
+**Context**: This will cause runtime errors when processing the last element.
+```
+
+**High severity:**
+```
+🟠 **High**: Performance issue - blocking async call
+
+**Location**: `handlers/MessageHandler.cs:23`
+
+**Issue**: Using `.Result` on async method blocks the thread
+
+**Suggestion**: Use `await` instead:
+```csharp
+var result = await GetDataAsync();
+```
+
+**Context**: Blocking async calls can cause thread pool starvation.
+```
+
+**Medium severity:**
+```
+🟡 **Medium**: Code quality - unused import
+
+**Location**: `components/UserList.tsx:5`
+
+**Issue**: Import `useMemo` is declared but never used
+
+**Suggestion**: Remove the unused import to keep code clean.
+```
+
+**Low severity:**
+```
+🟢 **Low**: Style suggestion - naming consistency
+
+**Location**: `utils/helpers.ts:12`
+
+**Issue**: Function name `processData` doesn't follow event handler naming pattern
+
+**Suggestion**: Consider renaming to `handleProcessData` if it's an event handler, or keep current name if it's a utility function.
+```
+
+### Positive Feedback
+
+Recognize well-implemented patterns:
+- Highlight clean architecture decisions
+- Acknowledge comprehensive error handling
+- Recognize thoughtful performance optimizations
+- Appreciate thorough test coverage
+- Note good edge case handling
+
+## Special Considerations
+
+### Multi-Repository Changes
+
+If PR affects multiple repositories:
+- Verify consistency across repos
+- Check API contract compatibility
+- Ensure deployment order is correct
+- Validate cross-repo dependencies
+
+### Database Changes
+
+- Migration scripts included
+- Backward compatibility considered
+- Performance impact assessed
+- Rollback plan documented
+
+### Breaking Changes
+
+- Properly documented in PR description
+- Migration guide provided
+- Communication plan in place
+- Version bumping considered
+
+## Review Context Adaptation
+
+**For Pull Requests:**
+- Review all changed files
+- Consider impact on related code
+- Check for breaking changes
+- Verify tests cover changes
+
+**For Individual Code Reviews:**
+- Focus on the provided code snippet/file
+- Consider correctness and logic first
+- Check against project standards
+- Provide focused, actionable feedback
+
+**For Implementation Feedback:**
+- Review before or after implementation
+- Focus on correctness and best practices
+- Suggest improvements early
+- Consider maintainability
+
+## Example Usage
+
+**PR Review:**
+```
+Review PR #123 in repository keaisdev/chartswap-frontend.
+Focus on:
+- Correctness and edge cases
+- NServiceBus configuration correctness
+- Async/await patterns
+- Error handling completeness
+- Security considerations
+- Test coverage
+```
+
+**Code Review:**
+```
+Review this code snippet for correctness and best practices:
+[code here]
+```
+
+## Deliverables (always produce)
+
+1) **Review Summary** - Overall assessment with verdict (Approve/Request Changes/Comment)
+2) **Findings by Severity** - All issues categorized by severity level
+3) **Detailed Feedback** - Each finding with location, issue, suggestion, and context
+4) **Positive Feedback** - Recognition of well-implemented patterns
+5) **Recommendations** - Actionable next steps for addressing issues
+6) **Review Metadata** - Files reviewed, scope, and review context
+
+---
+
+## Review Output Template
+
+```markdown
+# Code Review Summary
+
+## Verdict
+[Approve / Request Changes / Comment]
+
+## Overall Assessment
+[2-3 sentence summary of review findings]
+
+## Findings Summary
+- **Critical**: [count] issues
+- **High**: [count] issues  
+- **Medium**: [count] issues
+- **Low**: [count] issues
+
+## Key Concerns
+1. [Top concern 1]
+2. [Top concern 2]
+3. [Top concern 3]
+
+## Positive Highlights
+- [Well-implemented pattern 1]
+- [Well-implemented pattern 2]
+
+## Detailed Findings
+
+### Critical Issues
+[Detailed findings with severity, location, issue, suggestion, context]
+
+### High Priority Issues
+[Detailed findings]
+
+### Medium Priority Issues
+[Detailed findings]
+
+### Low Priority / Suggestions
+[Detailed findings]
+
+## Recommendations
+1. [Actionable recommendation 1]
+2. [Actionable recommendation 2]
+
+---
+*Review completed on [date] | Files reviewed: [count] | PR: [PR number if applicable]*
+```
+
+---
 
 ## Examples
 
-**Example Prompts:**
-- "Review this pull request"
-- "Check this code for security issues"
-- "Review code quality of this file"
-- "Perform a performance review"
+### Example 1: PR Review
+**User**: "review PR #123"
 
-**Example Review Summary:**
-```
-PR Review Summary: #123 - User Authentication Feature
+**Agent actions**:
+1. Fetches PR #123 details from Azure DevOps
+2. Analyzes all changed files and commits
+3. Reviews against all focus areas
+4. Generates comprehensive feedback with findings
+5. Provides verdict and recommendations
 
-Overall: ✅ Approve with minor suggestions
+### Example 2: Code Snippet Review
+**User**: "review this code for security issues"
 
-Strengths:
-- Clean implementation
-- Good test coverage
-- Follows project patterns
+**Agent actions**:
+1. Analyzes provided code snippet
+2. Focuses on security aspects (injection risks, auth, data protection)
+3. Checks related context if needed
+4. Provides security-focused feedback
+5. Includes security-specific recommendations
 
-Issues Found:
-1. 🔴 Critical: Missing input validation (line 45)
-2. 🟡 Medium: Could use error boundary (line 120)
-3. 🟢 Minor: Consider extracting helper function (line 78)
+### Example 3: Quick Review
+**User**: "quick review of my changes"
 
-Security: ✅ No vulnerabilities found
-Performance: ✅ No concerns
-Standards: ✅ Compliant
+**Agent actions**:
+1. Analyzes current branch changes vs develop
+2. Performs thorough analysis (Steps 0-3)
+3. Outputs only Critical and High severity issues
+4. Provides brief summary of other areas checked
+5. Indicates deeper review may reveal more
 
-Recommendations:
-- Add input validation before processing
-- Consider adding error boundary for better UX
-- Extract helper function for reusability
-```
+### Example 4: Focused Review
+**User**: "review PR #456, focus on performance and async patterns"
 
-## Resources
+**Agent actions**:
+1. Fetches PR #456
+2. Analyzes all changes
+3. Prioritizes performance and async/await review
+4. Still checks other areas but emphasizes requested focus
+5. Provides detailed feedback on performance and async patterns
 
-- Code Review Best Practices
-- Security Checklist
-- Performance Guidelines
-- ChartSwap Style Guide
-- TypeScript Best Practices
+## Additional Resources
+
+- **Chartswap Standards**: See [references/chartswap-standards.md](references/chartswap-standards.md) for detailed naming conventions, code quality rules, and framework-specific patterns
+- **Architecture Context**: See `chartswap.root.repo/README.md` for system architecture
+- **Coding Standards**: See workspace rules in `agents.md` (skills and new portal context)

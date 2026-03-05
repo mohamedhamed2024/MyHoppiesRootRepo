@@ -1,232 +1,154 @@
 ---
 name: nextjs-code-standards
-description: Next.js and React code standards for the ChartSwap new portal (Ontellus ChartSwap). Use this skill when writing or reviewing the new portal frontend (ontellus.chartswap), adding components, implementing state (Zustand), calling Salesforce or .NET APIs, adding a new API integration, writing unit tests, or applying project code style and naming conventions. Make sure to use this skill whenever the user mentions Next.js code, React components, ChartSwap portal, Zustand state management, API integration, unit tests, or code style in the Ontellus ChartSwap project.
+description: Next.js and React code standards for the ChartSwap new portal (Ontellus ChartSwap). Use when writing or reviewing the new portal frontend (ontellus.chartswap), adding components, implementing state (Zustand), calling Salesforce or .NET APIs, adding a new API integration, writing unit tests, or applying project code style and naming conventions.
 ---
 
-# Next.js Code Standards
+# Next.js Code Standards (ChartSwap New Portal)
 
-Next.js and React code standards for the ChartSwap new portal. This skill provides coding conventions, patterns, and best practices for the Ontellus ChartSwap frontend.
+This skill defines **project standards for the ChartSwap new portal** — the Ontellus ChartSwap Next.js frontend (in `ontellus.chartswap/`). It covers architecture, code style, naming, components, state (Zustand), TypeScript, backend/Salesforce integration, and errors. Apply when implementing or reviewing features, components, or store logic in the new portal.
 
-## Overview
+**Scope:** ChartSwap new portal only (Next.js app in `ontellus.chartswap/`). Do not apply these standards to other ChartSwap repos (e.g. .NET services, Salesforce).
 
-This skill covers code standards, patterns, and conventions for the ChartSwap Next.js application. It includes component structure, state management with Zustand, API integration patterns, testing approaches, and naming conventions.
+## Architecture and design
 
-## Prerequisites
+- Clean, maintainable, scalable code; SOLID principles
+- Prefer functional and declarative over imperative
+- Type safety and static analysis; component-driven development
+- Avoid over-engineering; start simple, add complexity only when needed
 
-- Next.js 13+ (App Router)
-- React 18+
-- TypeScript
-- Zustand for state management
-- Understanding of React Server Components and Client Components
+## Planning before implementation
 
-## Instructions
+- Step-by-step planning; detailed pseudocode before coding
+- Document component architecture and data flow
+- Consider edge cases and error scenarios
 
-### Component Structure
+## Code style (summary)
 
-Follow these patterns for component organization:
+- Tabs for indentation; single quotes for strings (except to avoid escaping)
+- Omit semicolons unless required for disambiguation
+- No unused variables; space after keywords and before function parentheses
+- Strict equality (`===`) only; space around infix operators and after commas
+- Else on same line as closing brace; curly braces for multi-line conditionals
+- Always handle error parameters in callbacks
+- Line length ≤ 80 characters; trailing commas in multiline object/array literals
 
-1. **File Naming**: Use PascalCase for component files (`UserProfile.tsx`)
-2. **Component Naming**: Match component name to file name
-3. **Exports**: Use named exports for components
-4. **Types**: Define TypeScript interfaces/types in same file or separate types file
-5. **Server vs Client**: Mark client components with `'use client'` directive
+Full code-style list and naming table: [reference.md](reference.md).
 
-**Example:**
-```tsx
-'use client';
+## Naming conventions (quick reference)
 
-import { useState } from 'react';
+| Kind | Convention | Examples |
+|------|------------|----------|
+| Components, types, interfaces | PascalCase | `UserProfile`, `AuthWizard` |
+| Directories, file names | kebab-case | `auth-wizard`, `user-profile.tsx` |
+| Variables, functions, hooks, props | camelCase | `handleClick`, `useAuth` |
+| Env vars, constants | UPPERCASE | `API_URL`, `MAX_RETRIES` |
+| Event handlers | handle + Verb | `handleClick`, `handleSubmit` |
+| Booleans | is/has/can prefix | `isLoading`, `hasError`, `canSubmit` |
+| Custom hooks | use + Noun | `useAuth`, `useForm` |
 
-interface UserProfileProps {
-  userId: string;
-}
+Short names allowed: err, req, res, props, ref. Prefer full words otherwise.
 
-export function UserProfile({ userId }: UserProfileProps) {
-  // Component implementation
-}
+## Component and feature implementation
+
+- **Components:** Functional components with TypeScript interfaces; use `function` keyword
+- **Logic:** Extract reusable logic into custom hooks; use composition
+- **Performance:** `React.memo()` where it helps; cleanup in `useEffect`; `useCallback` for callbacks; `useMemo` for expensive computations; stable keys in lists (avoid index); avoid inline functions in JSX; dynamic imports for code splitting
+- **Next.js:** Metadata, caching, error boundaries as appropriate; built-in `Image`, `Link`, `Script`, `Head`; implement loading states
+
+## TypeScript
+
+- Strict mode; clear interfaces for props, state, and store shape
+- Type guards for nullable values; generics where needed
+- Prefer `interface` when extending; use `Partial`, `Pick`, `Omit`, mapped types as needed
+
+## State management
+
+**Local:** `useState` for component-level UI only; avoid lifting state unless shared; initialize explicitly.
+
+**Global (Zustand):**
+- One store per domain/feature; flat, minimal state
+- Separate state, actions, selectors; prefer updater functions
+- Use selectors to avoid unnecessary re-renders
+- No derived data in store (compute in selectors); no non-serializable values unless required
+- Reset store on logout or context change
+- Store layout: dedicated `stores/` or feature-scoped dir; export store hook and typed selectors; hooks named `use<Feature>Store` (e.g. `useAuthStore`, `useOrderStore`)
+- Performance: shallow comparison or selectors; avoid subscribing to whole store; keep actions synchronous; validate before persisting
+- **Avoid:** single giant store; mixing UI and business state; mutating nested refs; storing raw API responses; using Zustand as server cache
+- **API and server state:** Use Zustand for data from APIs (Salesforce, .NET). Do not add new shared/global state in React Context; prefer Zustand stores (e.g. `useXxxStore`). Existing Context may remain; new features and new API state must use Zustand.
+
+Full Zustand and store structure: [reference.md](reference.md).
+
+## Backend / Salesforce integration
+
+The new portal (ontellus.chartswap) talks to **chartswap-Salesforce** and **.NET services** via REST/SOAP APIs. Backend logic and data live in those repos, not in the frontend.
+
+**Repos:**
+- **ontellus.chartswap** — `repos/Chartswap-Frontend/ontellus.chartswap/` (this app; UI and API client code)
+- **chartswap-Salesforce** — `repos/chartswap-Salesforce/` (Salesforce backend; Apex, REST/SOAP endpoints)
+- **.NET services** — same Chartswap-Frontend repo (microservices); frontend may call them as well
+
+**API routes (Next.js BFF):**
+- **Location:** `src/pages/api/` (Pages Router). One file per route; URL is `/api/` + path (e.g. `pages/api/requests/requests.ts` → `/api/requests/requests`).
+- **Internal prefix (browser → Next.js):** `/api/`. Client uses `AxiosClientMiddleware` with `EndpointType.Internal` (baseUrl `/api/`).
+- **External prefix (Next.js → Salesforce):** Base URL from `NEXT_PUBLIC_BASE_API_URL`; Salesforce paths use `apexrest/` (e.g. `apexrest/getrequestslist`). Full URL: `getEndpointUrl(EXTERNAL_ENDPOINTS.xxx)` in `@/utils/Helper`.
+
+**Common pattern:**
+- **Client (browser):** Use `AxiosClientMiddleware` with `EndpointType.Internal`; path from `ENDPOINTS` in `@/config/AppConfig`. CSRF and NextAuth are handled by the middleware.
+- **API route handler (server):** Use `RouteHandler({ GET, POST, ... })` from `@/lib/server/services/RouteHandler/RouteHandler`; use `AxiosServerMiddleware` and `getEndpointUrl(EXTERNAL_ENDPOINTS.xxx)` to call Salesforce. Add new internal paths to `ENDPOINTS`, new Salesforce paths to `EXTERNAL_ENDPOINTS` in `src/config/AppConfig.ts`.
+- **Env:** `NEXT_PUBLIC_BASE_API_URL` (Salesforce base); optionally `BASE_MOCK_API_URL` for mocks. Never commit secrets; use `.env.local` and `.env.example` in `ontellus.chartswap/`.
+- **API contracts and endpoints:** Documented in repo `agents.md` (API Contracts, Common Patterns). When designing or changing contracts, use the **api-integration** skill.
+
+**When adding a new API (workflow):**
+
+1. **Contract:** Check `agents.md` (and any API docs) for existing endpoints. If you are **adding or changing** an endpoint/contract, use the **api-integration** skill to design it (REST, auth, request/response).
+2. **Backend:** If the API lives in Salesforce, use **salesforce-development** for Apex/REST in chartswap-Salesforce. If it is a .NET endpoint, use **dotnet-backend**.
+3. **Frontend (ontellus.chartswap):** Implement the call using the common pattern above: new route under `src/pages/api/` with `RouteHandler`; add entries to `ENDPOINTS` / `EXTERNAL_ENDPOINTS` in `AppConfig.ts`; client uses `AxiosClientMiddleware` (Internal) or server uses `AxiosServerMiddleware` + `getEndpointUrl(EXTERNAL_ENDPOINTS.xxx)`. **Store server/API state in Zustand**, not in React Context. Follow this skill for code style and naming.
+4. **Standards:** Apply this skill (nextjs-code-standards) for all frontend code, including the integration layer and Zustand stores.
+
+## UI and styling
+
+- Shared UI library for consistent, accessible components; composition over custom one-offs
+- Tailwind for utilities; contrast and spacing for accessibility; CSS variables for theme/spacing
+
+## Security
+
+- Sanitize input (e.g. DOMPurify for HTML); validate all user input; use proper auth
+
+## Error handling and validation
+
+- **Forms:** Zod for schemas; clear error messages; React Hook Form or equivalent
+- **Errors:** Error boundaries; log to external service (e.g. Sentry); user-friendly fallback UI
+
+## Unit testing
+
+Test Next.js components, hooks, services, and API routes using Jest and React Testing Library. Tests co-locate with source files (e.g. `Button.tsx` → `Button.test.tsx`).
+
+**Testing stack:** Jest 29.6.2, React Testing Library 14.0.0, TypeScript 5.1.6
+
+**File structure:**
+```
+src/
+  components/Button/
+    Button.tsx
+    Button.test.tsx
+  hooks/
+    useCart.tsx
+    useCart.test.tsx
 ```
 
-### State Management with Zustand
-
-Use Zustand for global state management:
-
-1. **Store Creation**: Create stores in `stores/` directory
-2. **Store Naming**: Use descriptive names (`useUserStore`, `useAuthStore`)
-3. **Actions**: Define actions within the store
-4. **Selectors**: Use selectors for computed values
-5. **Persistence**: Use persist middleware when needed
-
-**Example:**
-```tsx
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-interface UserState {
-  user: User | null;
-  setUser: (user: User) => void;
-  clearUser: () => void;
-}
-
-export const useUserStore = create<UserState>()(
-  persist(
-    (set) => ({
-      user: null,
-      setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
-    }),
-    { name: 'user-storage' }
-  )
-);
+**Run tests:**
+```bash
+npm test              # Run all tests
+npm run coverage      # Run with coverage
+npm run watch         # Watch mode
 ```
 
-### API Integration
+**For implementation patterns:** Component/hook/context/service/API testing, query priority, mocking strategies, and best practices: [references/nextjs-testing.md](references/nextjs-testing.md)
 
-Follow patterns for calling Salesforce and .NET APIs:
+**For code examples:** Render helpers, error states, form submission, toast notifications, test organization: [references/testing-examples.md](references/testing-examples.md)
 
-1. **API Routes**: Create API routes in `app/api/` directory
-2. **Client Calls**: Use fetch or axios for client-side calls
-3. **Server Actions**: Use Server Actions for form submissions
-4. **Error Handling**: Implement consistent error handling
-5. **Type Safety**: Type API responses with TypeScript
+## Reference
 
-**Example:**
-```tsx
-// Server Action
-'use server';
-
-export async function fetchUserData(userId: string) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
-    if (!response.ok) throw new Error('Failed to fetch');
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    throw error;
-  }
-}
-```
-
-### Adding New API Integration
-
-When adding a new API integration:
-
-1. **Create API Route**: Add route in `app/api/` or use Server Actions
-2. **Define Types**: Create TypeScript interfaces for request/response
-3. **Error Handling**: Implement error boundaries and error states
-4. **Loading States**: Add loading indicators
-5. **Documentation**: Document API endpoints and usage
-
-**Example:**
-```tsx
-// app/api/users/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const userId = searchParams.get('userId');
-  
-  // API logic
-  return NextResponse.json({ data });
-}
-```
-
-### Unit Testing
-
-Write unit tests following project patterns:
-
-1. **Test Files**: Place tests next to components (`Component.test.tsx`)
-2. **Testing Library**: Use React Testing Library
-3. **Test Structure**: Follow AAA pattern (Arrange, Act, Assert)
-4. **Mocking**: Mock API calls and external dependencies
-5. **Coverage**: Aim for meaningful coverage, not just high percentages
-
-**Example:**
-```tsx
-import { render, screen } from '@testing-library/react';
-import { UserProfile } from './UserProfile';
-
-describe('UserProfile', () => {
-  it('renders user information', () => {
-    render(<UserProfile userId="123" />);
-    expect(screen.getByText('User Profile')).toBeInTheDocument();
-  });
-});
-```
-
-### Code Style and Naming Conventions
-
-Follow these naming conventions:
-
-1. **Variables**: camelCase (`userName`, `isLoading`)
-2. **Components**: PascalCase (`UserProfile`, `NavigationBar`)
-3. **Constants**: UPPER_SNAKE_CASE (`API_BASE_URL`, `MAX_RETRIES`)
-4. **Files**: Match component name or use kebab-case for utilities
-5. **Functions**: camelCase with verb prefix (`fetchUser`, `handleSubmit`)
-
-**Example:**
-```tsx
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const MAX_RETRY_ATTEMPTS = 3;
-
-export function fetchUserData(userId: string) {
-  // Implementation
-}
-```
-
-## Output
-
-- Code following Next.js and React best practices
-- Consistent naming conventions
-- Proper TypeScript typing
-- Well-structured components and stores
-- Testable code with unit tests
-
-## Error Handling
-
-- **Type Errors**: Ensure proper TypeScript types are defined
-- **API Errors**: Implement error boundaries and error states
-- **State Errors**: Validate state updates and handle edge cases
-- **Test Failures**: Review test assertions and mocks
-
-## Examples
-
-**Example Prompts:**
-- "Create a new component following our code standards"
-- "Add Zustand store for user authentication"
-- "Integrate a new API endpoint"
-- "Write unit tests for this component"
-
-**Example Component:**
-```tsx
-'use client';
-
-import { useUserStore } from '@/stores/useUserStore';
-import { fetchUserData } from '@/actions/user';
-
-interface UserCardProps {
-  userId: string;
-}
-
-export function UserCard({ userId }: UserCardProps) {
-  const { user, setUser } = useUserStore();
-  
-  const handleLoad = async () => {
-    const data = await fetchUserData(userId);
-    setUser(data);
-  };
-  
-  return (
-    <div>
-      {user ? <div>{user.name}</div> : <button onClick={handleLoad}>Load</button>}
-    </div>
-  );
-}
-```
-
-## Resources
-
-- Next.js Documentation
-- React Documentation
-- Zustand Documentation
-- TypeScript Handbook
-- Project Style Guide
+- Full code style rules, naming table, and Zustand details: [reference.md](reference.md)
+- Unit testing patterns and mocking: [references/nextjs-testing.md](references/nextjs-testing.md)
+- Testing code examples: [references/testing-examples.md](references/testing-examples.md)

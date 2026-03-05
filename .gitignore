@@ -42,3 +42,5 @@ env/
 
 # Repositories directory (cloned repos are separate git repositories)
 repos/
+
+.cursor/mcp.json
