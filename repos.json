@@ -1,0 +1,10 @@
+{
+	"repos": [
+		{
+			"name": "MyHoppies",
+			"url": "https://github.com/mohamedhamed2024/MyHoppies.git",
+			"path": "./repos/MyHoppies",
+			"branch": "main"
+		}
+	]
+}
