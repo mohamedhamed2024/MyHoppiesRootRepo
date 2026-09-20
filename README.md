@@ -66,9 +66,23 @@ Or simply open the folder in Cursor - it will detect the workspace file.
 
 ## Scripts
 
-All scripts are located in the `scripts/` directory:
+All scripts are located in the `scripts/` directory.
 
-### `clone-repos.ps1`
+**macOS / Linux (Terminal):** use the `.sh` scripts (requires `bash` and `python3`):
+
+```bash
+chmod +x scripts/*.sh   # once, if needed
+./scripts/clone-repos.sh
+./scripts/sync-repos.sh
+./scripts/repo-status.sh
+./scripts/run-command.sh --command "git status"
+./scripts/add-repo.sh --name "my-project" --url "https://github.com/username/my-project.git"
+./scripts/setup-mcp.sh
+```
+
+**Windows (PowerShell):** use the `.ps1` scripts below.
+
+### `clone-repos.ps1` / `clone-repos.sh`
 
 Clones all repositories listed in `repos.json` to their specified paths.
 
@@ -79,7 +93,7 @@ Clones all repositories listed in `repos.json` to their specified paths.
 .\scripts\clone-repos.ps1 -ConfigFile "custom-repos.json"
 ```
 
-### `sync-repos.ps1`
+### `sync-repos.ps1` / `sync-repos.sh`
 
 Pulls latest changes from all configured repositories.
 
@@ -89,7 +103,7 @@ Pulls latest changes from all configured repositories.
 .\scripts\sync-repos.ps1 -ConfigFile "custom-repos.json"
 ```
 
-### `repo-status.ps1`
+### `repo-status.ps1` / `repo-status.sh`
 
 Shows git status for all configured repositories.
 
@@ -99,7 +113,7 @@ Shows git status for all configured repositories.
 .\scripts\repo-status.ps1 -Detailed  # Show detailed change information
 ```
 
-### `run-command.ps1`
+### `run-command.ps1` / `run-command.sh`
 
 Executes a command across all repositories.
 
@@ -115,7 +129,7 @@ Executes a command across all repositories.
 - `-StopOnError`: Stop execution if any repository fails
 - `-Parallel`: Run commands in parallel (PowerShell jobs)
 
-### `add-repo.ps1`
+### `add-repo.ps1` / `add-repo.sh`
 
 Adds a new repository to the `repos.json` configuration.
 
@@ -131,7 +145,7 @@ Adds a new repository to the `repos.json` configuration.
 - `-Path`: Local path (default: `./repos/{name}`)
 - `-Branch`: Branch to clone (default: `main`)
 
-### `setup-mcp.ps1`
+### `setup-mcp.ps1` / `setup-mcp.sh`
 
 Sets up and validates MCP (Model Context Protocol) configuration.
 
