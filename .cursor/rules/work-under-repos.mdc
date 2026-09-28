@@ -1,0 +1,39 @@
+---
+description: Product and engineering work lives under repos/; root is for agentic workspace only.
+alwaysApply: true
+---
+
+# Work code under `repos/`
+
+This root repository is a **multi-repo workspace shell**. Anything that is **product or engineering work** (features, fixes, refactors, tests, app config, app docs) must be implemented **inside a child repo under `repos/`**, not at the workspace root.
+
+## Where to edit
+
+| Kind of change | Location |
+|----------------|----------|
+| Application code, UI, APIs, infra for a product | `repos/<repo-name>/...` (paths from `repos.json`) |
+| Agent skills, agent instructions, Cursor/MCP setup | Root: `.agent/`, `agents.md`, `.cursor/`, `mcp-config.json` |
+| Clone/sync/status scripts, repo registry | Root: `scripts/`, `repos.json`, `*.code-workspace` |
+| Generated or loop reports (daily status, etc.) | Root: `docs/`, `reports/` when explicitly requested |
+
+If the user does not name a repo, use the matching entry in `repos.json` (default path `./repos/<name>`). If no repo exists yet, add it via `scripts/add-repo` and clone before placing work there.
+
+## Agent behavior
+
+1. **Before editing**, decide: is this **work** (ships in a product repo) or **agentic/workspace** (skills, rules, scripts, workspace config)?
+2. **Work** → only create or modify files under `repos/**`. Do not add app source, packages, or feature tests at the root.
+3. **Agentic/workspace** → stay outside `repos/` unless syncing a skill that intentionally lives in a child repo.
+4. If the user asks for a change at the root that is clearly product work, **redirect**: implement under `repos/<appropriate-repo>/` and say which path you used.
+5. Commits and PRs for product changes should target the **child repository** (`repos/...`), not this root repo, unless the change is workspace-only.
+
+## Examples
+
+- Add a React page or API endpoint → `repos/MyHoppies/...` (or the repo named in `repos.json`).
+- Update a ChartSwap component or Next.js route → the relevant repo under `repos/`, not `./src` at root.
+- Add a Cursor rule, skill, or daily-loop doc → `.cursor/rules/`, `.agent/skills/`, or `agents.md` at root.
+- Register a new Git remote to work on → update `repos.json` and use `scripts/add-repo` / `clone-repos`; then work in `repos/<name>/`.
+
+## Do not
+
+- Create `src/`, `app/`, `package.json`, or similar product layouts at the workspace root.
+- Mix product feature code into root `docs/` or `scripts/` when it belongs in a child repo.
