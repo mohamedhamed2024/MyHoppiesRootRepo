@@ -155,6 +155,10 @@ Sets up and validates MCP (Model Context Protocol) configuration.
 .\scripts\setup-mcp.ps1 -CheckOnly  # Only validate, don't create
 ```
 
+## Scheduled daily-loop automations
+
+Morning brief, EOD wrap, and weekly status on a cron schedule with **My Machines** and **daily-work-loop-copilot**: see [docs/automations/README.md](docs/automations/README.md). Start the worker with `./scripts/start-daily-loop-worker.sh`.
+
 ## MCP Configuration
 
 MCP (Model Context Protocol) servers are configured in `.cursor/mcp.json`. The default configuration includes:

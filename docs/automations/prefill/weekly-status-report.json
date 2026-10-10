@@ -1,0 +1,43 @@
+{
+  "name": "Daily loop — weekly status report",
+  "description": "Friday /daily-status-report (7-day team view). Chat output only unless you extend the prompt for HTML publish.",
+  "workflow": {
+    "triggers": [
+      {
+        "cron": {
+          "cron": "0 9 * * 5"
+        }
+      }
+    ],
+    "actions": [
+      {
+        "mcp": {
+          "server": {
+            "name": "daily-loop-tools"
+          }
+        }
+      },
+      {
+        "mcp": {
+          "server": {
+            "name": "github"
+          }
+        }
+      }
+    ],
+    "prompts": [
+      {
+        "text": "You are running the daily-work-loop-copilot project status report (equivalent to /daily-status-report --days=7 --audience=team).\n\n1. Use MCP get_daily_loop_command for daily-status-report and plan_daily_status_report if helpful.\n2. Gather (daily-loop-exploration): GitHub issues and PRs updated in the last 7 days; blockers; merges.\n3. Draft (daily-loop-execution): team-audience status report with confidence note.\n4. INTEGRATION_STACK=github. Project context: MyHoppies product repo per plugin Configure; include workspace root activity when relevant.\n5. Do not publish to Confluence. Do not commit or push files unless a human later approves in chat.\n6. Optionally mention that HTML publish would use docs/daily-report/index.html and render-daily-report-html — skip file writes in this unattended run.\n7. Output the full report as markdown."
+      }
+    ],
+    "model": "",
+    "agentOptions": {
+      "skipInstall": true
+    },
+    "memoryEnabled": false,
+    "gitConfig": {
+      "repo": "mohamedhamed2024/MyHoppiesRootRepo",
+      "branch": "main"
+    }
+  }
+}

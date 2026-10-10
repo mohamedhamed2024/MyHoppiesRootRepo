@@ -1,0 +1,43 @@
+{
+  "name": "Daily loop — morning brief",
+  "description": "Scheduled /start-day for MyHoppiesRootRepo (GitHub stack). Draft-only; read MCP.",
+  "workflow": {
+    "triggers": [
+      {
+        "cron": {
+          "cron": "0 9 * * 1-5"
+        }
+      }
+    ],
+    "actions": [
+      {
+        "mcp": {
+          "server": {
+            "name": "daily-loop-tools"
+          }
+        }
+      },
+      {
+        "mcp": {
+          "server": {
+            "name": "github"
+          }
+        }
+      }
+    ],
+    "prompts": [
+      {
+        "text": "You are running the daily-work-loop-copilot morning brief for this repository (equivalent to /start-day).\n\n1. Use MCP get_daily_loop_command for start-day and follow that procedure.\n2. Load skills via daily-loop-tools MCP (daily-work-loop, work-queue-ranking, github-daily-data).\n3. Run Gather (daily-loop-exploration) then Draft (daily-loop-execution) for the morning brief template.\n4. INTEGRATION_STACK=github. Scope GitHub issues/PRs per plugin Configure (GITHUB_OWNER, GITHUB_REPO) and include this monorepo root (MyHoppiesRootRepo) plus child repos under repos/ when relevant.\n5. Report blockers (stale reviews, failing CI per STALE_REVIEW_DAYS), top 3 priorities with why_now, and one suggested first action.\n6. Read-only: do not post comments, merge PRs, or close issues.\n7. Post the full brief as the automation output (markdown)."
+      }
+    ],
+    "model": "",
+    "agentOptions": {
+      "skipInstall": true
+    },
+    "memoryEnabled": false,
+    "gitConfig": {
+      "repo": "mohamedhamed2024/MyHoppiesRootRepo",
+      "branch": "main"
+    }
+  }
+}
