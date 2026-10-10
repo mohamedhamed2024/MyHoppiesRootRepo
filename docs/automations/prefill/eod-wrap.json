@@ -1,0 +1,43 @@
+{
+  "name": "Daily loop — EOD wrap",
+  "description": "Scheduled /eod-wrap with draft ticket comments only (no unattended writes).",
+  "workflow": {
+    "triggers": [
+      {
+        "cron": {
+          "cron": "30 17 * * 1-5"
+        }
+      }
+    ],
+    "actions": [
+      {
+        "mcp": {
+          "server": {
+            "name": "daily-loop-tools"
+          }
+        }
+      },
+      {
+        "mcp": {
+          "server": {
+            "name": "github"
+          }
+        }
+      }
+    ],
+    "prompts": [
+      {
+        "text": "You are running the daily-work-loop-copilot end-of-day wrap (equivalent to /eod-wrap --update-tickets draft).\n\n1. Use MCP get_daily_loop_command for eod-wrap and follow that procedure.\n2. Gather (daily-loop-exploration): today's git activity and GitHub issues/PRs for configured owner/repo and this workspace.\n3. Draft (daily-loop-execution): full EOD template — shipped, in progress, blocked, draft issue comments, open loops table.\n4. Parent Check: verify open loops have owner, next step, and date per plugin verification.md; note PASS/FAIL.\n5. INTEGRATION_STACK=github. Do NOT create .cursor/daily-loop-write-approved. Do NOT post GitHub or Jira comments. Do NOT merge or close anything.\n6. Output the complete EOD markdown in the automation result."
+      }
+    ],
+    "model": "",
+    "agentOptions": {
+      "skipInstall": true
+    },
+    "memoryEnabled": false,
+    "gitConfig": {
+      "repo": "mohamedhamed2024/MyHoppiesRootRepo",
+      "branch": "main"
+    }
+  }
+}
