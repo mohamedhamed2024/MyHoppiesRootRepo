@@ -3,151 +3,97 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Daily engineering status for MyHoppiesRootRepo." />
+  <meta name="description" content="Weekly engineering status for MyHoppies and MyHoppiesRootRepo." />
+  <meta name="daily-loop-last-sync" content="2026-10-12T06:39:28Z" />
   <link rel="canonical" href="https://mohamedhamed2024.github.io/MyHoppiesRootRepo/" />
-  <title>Daily status — MyHoppiesRootRepo — 28 Sep 2026</title>
+  <title>Weekly status — MyHoppies — 2026-10-12</title>
   <style>
     :root {
       --bg: #0f1419;
       --surface: #1a2332;
-      --border: #2d3a4f;
       --text: #e7ecf3;
-      --muted: #8b9cb3;
-      --accent: #5b9fd4;
-      --ok: #3d9a6a;
-      --warn: #c9a227;
-      --none: #6b7a8f;
+      --muted: #9aa5b5;
+      --accent: #3d8bfd;
+      --border: #2a3544;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.55;
-      padding: 2rem 1.25rem 3rem;
+      line-height: 1.5;
     }
-    .wrap { max-width: 52rem; margin: 0 auto; }
+    .wrap { max-width: 52rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
     header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1.25rem;
-      margin-bottom: 1.75rem;
-    }
-    h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.5rem; }
-    .meta { color: var(--muted); font-size: 0.9rem; }
-    .meta strong { color: var(--text); font-weight: 500; }
-    section { margin-bottom: 1.75rem; }
-    h2 {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin: 0 0 0.75rem;
-      font-weight: 600;
-    }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-      gap: 0.75rem;
-    }
-    .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
     }
-    .card .n { font-size: 1.75rem; font-weight: 700; color: var(--accent); }
-    .card .l { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
-    ul { margin: 0; padding-left: 1.2rem; }
-    li { margin-bottom: 0.35rem; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    th, td {
-      text-align: left;
-      padding: 0.6rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-    th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; }
-    .badge {
+    h1 { font-size: 1.35rem; margin: 0 0 0.5rem; }
+    .meta { color: var(--muted); font-size: 0.9rem; }
+    .sync {
       display: inline-block;
-      font-size: 0.7rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      font-weight: 600;
+      margin-top: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      background: rgba(61, 139, 253, 0.15);
+      border: 1px solid rgba(61, 139, 253, 0.35);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text);
     }
-    .badge-none { background: #2a3344; color: var(--none); }
-    .badge-closed { background: #1e3a2f; color: var(--ok); }
-    .confidence { font-size: 0.85rem; color: var(--muted); }
-    footer {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.8rem;
-      color: var(--muted);
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
     }
+    h2 { font-size: 1.05rem; margin: 0 0 0.75rem; color: var(--accent); }
+    ul { margin: 0; padding-left: 1.25rem; }
+    li { margin-bottom: 0.35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.4rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    code { font-size: 0.85em; }
+    .muted { color: var(--muted); margin: 0; }
+    footer { margin-top: 2rem; font-size: 0.8rem; color: var(--muted); text-align: center; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>Daily status — MyHoppiesRootRepo</h1>
+      <h1>Weekly status — MyHoppies — 2026-10-12</h1>
       <p class="meta">
-        <strong>Period:</strong> 27 Sep 2026 14:03 – 28 Sep 2026 14:03 (UTC+3) &nbsp;|&nbsp;
-        <strong>Audience:</strong> team &nbsp;|&nbsp;
-        <strong>Stack:</strong> GitHub (<a href="https://github.com/mohamedhamed2024/MyHoppiesRootRepo">mohamedhamed2024/MyHoppiesRootRepo</a>)
+        <strong>Project:</strong> MyHoppies ·
+        <strong>Period:</strong> 2026-10-05T06:36:44Z – 2026-10-12T06:36:44Z ·
+        <strong>Audience:</strong> team
+         · <strong>Stack:</strong> github
       </p>
-      <p class="confidence">Data confidence: <strong>high</strong> (GitHub MCP + local git; no Atlassian scope)</p>
+      <p class="sync" title="2026-10-12T06:39:28Z">Last synced: 2026-10-12T06:39:28Z</p>
     </header>
 
     <section>
       <h2>Summary</h2>
-      <div class="cards">
-        <div class="card">
-          <div class="n">0</div>
-          <div class="l">Issues updated in window</div>
-        </div>
-        <div class="card">
-          <div class="n">0</div>
-          <div class="l">Merged PRs</div>
-        </div>
-        <div class="card">
-          <div class="n">0</div>
-          <div class="l">Open PRs</div>
-        </div>
-        <div class="card">
-          <div class="n">0</div>
-          <div class="l">Commits (24h)</div>
-        </div>
-      </div>
+      <ul>
+        <li>Completed issues: 0</li>
+        <li>Merged PRs: 1</li>
+        <li>In progress: 0 labeled in-progress; 15 open backlog issues</li>
+        <li>Blocked: 0</li>
+      </ul>
     </section>
 
     <section>
       <h2>Highlights</h2>
       <ul>
-        <li>No GitHub issues or pull requests changed in the last 24 hours for this repository.</li>
-        <li>Repository has one historical issue (#1, closed test issue from MCP verification); it was not updated in this period.</li>
-        <li>Branch <code>main</code> is aligned with <code>origin/main</code> at last publish.</li>
+        <li>Workspace: <a href="https://github.com/mohamedhamed2024/MyHoppiesRootRepo/pull/2">MyHoppiesRootRepo PR #2</a> merged 2026-10-10 (scheduled daily-loop automations and <code>scripts/start-daily-loop-worker.sh</code>). GitHub Pages build succeeded the same minute.</li>
+        <li>Product: no MyHoppies issues, pull requests, or commits updated since 2026-10-05. Last product merge remains <a href="https://github.com/mohamedhamed2024/MyHoppies/pull/17">PR #17</a> (US-002 time tracking, 2026-09-24), outside this window.</li>
+        <li><a href="https://github.com/mohamedhamed2024/MyHoppies/issues/3">MyHoppies #3</a> (US-002 track time) is still open after PR #17 shipped — close-or-verify candidate.</li>
+        <li>Open pull requests: 0 on MyHoppies and MyHoppiesRootRepo. No blocked or in-progress labels.</li>
       </ul>
-    </section>
-
-    <section>
-      <h2>In progress (local)</h2>
-      <table>
-        <thead>
-          <tr><th>Item</th><th>State</th><th>Notes</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="3" style="color: var(--muted);">No tracked in-repo WIP at publish time.</td>
-          </tr>
-        </tbody>
-      </table>
     </section>
 
     <section>
@@ -158,7 +104,14 @@
         </thead>
         <tbody>
           <tr>
-            <td colspan="3" style="color: var(--muted);">None identified in GitHub or git for this window.</td>
+            <td>None this period</td>
+            <td>—</td>
+            <td>No blocked labels, open PRs, failing CI, or stale reviews</td>
+          </tr>
+          <tr>
+            <td>Backlog stale — 15 open MyHoppies issues (#2–#16), none updated since 2026-03-05</td>
+            <td>mohamedhamed2024</td>
+            <td>Start with #3 close-or-verify, then MVP #4 and #2</td>
           </tr>
         </tbody>
       </table>
@@ -167,39 +120,35 @@
     <section>
       <h2>PR / review health</h2>
       <ul>
-        <li>No open pull requests; no pending reviews or CI failures on PRs.</li>
+        <li>Open PRs: 0 (MyHoppies and MyHoppiesRootRepo)</li>
+        <li>Merged in window: MyHoppiesRootRepo #2 on 2026-10-10 (no review comments). MyHoppies merged in window: 0</li>
+        <li>Review requested: none found on open pull requests in either repo</li>
+        <li>Stale reviews (&gt;2d): 0</li>
+        <li>CI: MyHoppiesRootRepo pages build succeeded 2026-10-10; MyHoppies had no workflow runs in the window</li>
       </ul>
-    </section>
-
-    <section>
-      <h2>Issue snapshot (repo)</h2>
-      <table>
-        <thead>
-          <tr><th>#</th><th>Title</th><th>State</th><th>Updated</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><a href="https://github.com/mohamedhamed2024/MyHoppiesRootRepo/issues/1">1</a></td>
-            <td>Test Issue - Created via MCP</td>
-            <td><span class="badge badge-closed">Closed</span></td>
-            <td>2026-03-05 (outside window)</td>
-          </tr>
-        </tbody>
-      </table>
     </section>
 
     <section>
       <h2>Next period focus</h2>
       <ul>
-        <li>Link new work to GitHub issues when tracking is needed.</li>
-        <li>Resume feature work when backlog items are opened or assigned in this repo.</li>
+        <li>MyHoppies #3 — US-002 time tracking — close or verify against shipped PR #17</li>
+        <li>MyHoppies #4 — US-003 hobby statistics — next MVP after time tracking</li>
+        <li>MyHoppies #2 — US-001 add hobbies — MVP foundational</li>
+        <li>Remaining backlog: #5–#11 and #14–#16 (priority-medium); #12–#13 weekly planner (priority-low)</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Repos</h2>
+      <ul>
+        <li><a href="https://github.com/mohamedhamed2024/MyHoppies">https://github.com/mohamedhamed2024/MyHoppies</a></li>
+        <li><a href="https://github.com/mohamedhamed2024/MyHoppiesRootRepo">https://github.com/mohamedhamed2024/MyHoppiesRootRepo</a></li>
       </ul>
     </section>
 
     <footer>
-      Published via <a href="https://pages.github.com/">GitHub Pages</a> from <code>docs/index.html</code>.
-      Regenerate with <code>/daily-status-report --publish=html</code> (update this file, then push <code>main</code>).
-      Archive copy: <code>reports/daily-status-YYYY-MM-DD.html</code>.
+      Generated by Daily Work Loop Copilot. Data confidence: high (GitHub API for issues, pull requests, commits, and Pages builds; 7-day window). Draft — not posted to GitHub Issues. ·
+      Sync timestamp (ISO): 2026-10-12T06:39:28Z
     </footer>
   </div>
 </body>
