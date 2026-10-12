@@ -73,7 +73,7 @@ Prefill JSON lives in [`prefill/`](./prefill/). Each file is meant for the Autom
 |------|---------|
 | [`prefill/morning-start-day.json`](./prefill/morning-start-day.json) | `/start-day` — blockers, top 3, first action |
 | [`prefill/eod-wrap.json`](./prefill/eod-wrap.json) | `/eod-wrap` — shipped / in progress / drafts only |
-| [`prefill/weekly-status-report.json`](./prefill/weekly-status-report.json) | `/daily-status-report` — 7-day team report (chat output; optional HTML path documented in prompt) |
+| [`prefill/weekly-status-report.json`](./prefill/weekly-status-report.json) | `/daily-status-report` — 7-day team report; renders `docs/index.html`, commit + push `main` for GitHub Pages |
 
 ## Troubleshooting
 
